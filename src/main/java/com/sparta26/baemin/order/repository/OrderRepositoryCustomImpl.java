@@ -66,8 +66,37 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom{
                 .limit(pageable.getPageSize());
 
         List<Order> orderList = query.fetch();
+        Long totalCount = getTotalCount(status, search, email, role);
 
-        return new PageImpl<>(orderList, pageable, orderList.size());
+        return new PageImpl<>(
+                orderList, pageable, totalCount != null ? totalCount : 0);
+    }
+
+    private Long getTotalCount(String status, String search, String email, String role) {
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(order.id.countDistinct())
+                .from(order)
+                .join(order.store, store)
+                .leftJoin(order.orderProducts, orderProduct)
+                .leftJoin(orderProduct.product, product);
+
+        // 조건부 필터
+        if (StringUtils.hasText(search) && !search.trim().isEmpty()) {
+            countQuery
+                    .where(
+                            store.name.containsIgnoreCase(search)
+                                    .or(product.name.containsIgnoreCase(search))
+                    );
+        }
+
+        countQuery.where(
+                        userCheck(role, email),
+                        statusEq(status),
+                        order.isPublic.eq(true)
+                );
+
+        return countQuery.fetchOne();
     }
 
     private List<OrderSpecifier<?>> getAllOrderSpecifiers(Pageable pageable) {

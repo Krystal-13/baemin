@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -35,7 +37,8 @@ public class PaymentServiceClientImpl implements PaymentServiceClient{
     }
 
     private Payment convertToPayment(ResponsePaymentInfoDto response) {
-        return Payment.createPayment(
+        return Payment.createPaymentWithId(
+                UUID.fromString(response.getPaymentId()),
                 PaymentStatus.fromString(response.getStatus()),
                 response.getCardNumber(),
                 response.getPayDate(),

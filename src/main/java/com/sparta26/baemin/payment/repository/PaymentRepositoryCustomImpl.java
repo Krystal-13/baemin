@@ -52,8 +52,22 @@ public class PaymentRepositoryCustomImpl implements  PaymentRepositoryCustom{
                 .limit(pageable.getPageSize());
 
         List<Payment> paymentList = query.fetch();
+        Long totalCount = getTotalCount(startDate, endDate, email, role);
 
-        return new PageImpl<>(paymentList, pageable, paymentList.size());
+        return new PageImpl<>(
+                paymentList, pageable,  totalCount != null ? totalCount : 0);
+    }
+
+    private Long getTotalCount(LocalDate startDate, LocalDate endDate, String email, String role) {
+        return queryFactory
+                .select(payment.count())
+                .from(payment)
+                .where(
+                        userCheck(role, email),
+                        dateBetween(startDate, endDate),
+                        payment.isPublic.eq(true)
+                )
+                .fetchOne();
     }
 
     private List<OrderSpecifier<?>> getAllOrderSpecifiers(Pageable pageable) {

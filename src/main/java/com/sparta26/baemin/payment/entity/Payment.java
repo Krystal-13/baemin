@@ -57,6 +57,16 @@ public class Payment extends AuditEntity {
                 .build();
     }
 
+    public static Payment createPaymentWithId(UUID id, PaymentStatus status, String cardNumber, LocalDateTime payDate, Integer totalPrice) {
+        return Payment.builder()
+                .id(id)
+                .status(status)
+                .cardNumber(cardNumber)
+                .payDate(payDate)
+                .totalPrice(totalPrice)
+                .build();
+    }
+
     public void addOrder(Order order) {
         this.order = order;
     }

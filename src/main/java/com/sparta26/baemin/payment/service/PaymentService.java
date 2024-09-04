@@ -44,6 +44,7 @@ public class PaymentService {
         }
 
         payment.updatePaymentStatus(PaymentStatus.COMPLETE);
+        paymentRepository.save(payment);
 
         return entityToResponsePaymentInfoDto(payment);
     }
@@ -126,6 +127,7 @@ public class PaymentService {
 
     private ResponsePaymentInfoDto entityToResponsePaymentInfoDto(Payment payment) {
         return ResponsePaymentInfoDto.createPaymentInfo(
+                payment.getId().toString(),
                 payment.getStatus().name(),
                 payment.getCardNumber(),
                 payment.getPayDate(),

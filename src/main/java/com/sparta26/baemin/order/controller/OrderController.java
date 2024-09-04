@@ -17,6 +17,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/orders")
 @RequiredArgsConstructor
@@ -156,4 +158,9 @@ public class OrderController {
                 orderService.deleteOrder(orderId, customUserDetails.getUsername()));
     }
 
+    @GetMapping("/weekly")
+    @PreAuthorize("hasAuthority('ROLE_MASTER') || hasAuthority('ROLE_MANAGER')")
+    public ResponseEntity<List<ResponseWeeklyOrderCountDto>> getWeeklyOrderCounts() {
+        return ResponseEntity.ok(orderService.getWeeklyOrderCounts());
+    }
 }

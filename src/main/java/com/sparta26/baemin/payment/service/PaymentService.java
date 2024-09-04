@@ -26,7 +26,7 @@ import java.util.UUID;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
-    @Transactional
+
     public ResponsePaymentInfoDto pay(RequestPaymentDto request) {
 
         Payment payment = Payment.createPayment(
@@ -44,9 +44,8 @@ public class PaymentService {
         }
 
         payment.updatePaymentStatus(PaymentStatus.COMPLETE);
-        paymentRepository.save(payment);
 
-        return entityToResponsePaymentInfoDto(payment);
+        return entityToDtoForCreateOrder(payment);
     }
 
     @Transactional(readOnly = true)
@@ -126,8 +125,17 @@ public class PaymentService {
     }
 
     private ResponsePaymentInfoDto entityToResponsePaymentInfoDto(Payment payment) {
-        return ResponsePaymentInfoDto.createPaymentInfo(
+        return ResponsePaymentInfoDto.createPaymentInfoWithId(
                 payment.getId().toString(),
+                payment.getStatus().name(),
+                payment.getCardNumber(),
+                payment.getPayDate(),
+                payment.getTotalPrice()
+        );
+    }
+
+    private ResponsePaymentInfoDto entityToDtoForCreateOrder(Payment payment) {
+        return ResponsePaymentInfoDto.createPaymentInfo(
                 payment.getStatus().name(),
                 payment.getCardNumber(),
                 payment.getPayDate(),

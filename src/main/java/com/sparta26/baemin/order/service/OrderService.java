@@ -20,6 +20,7 @@ import com.sparta26.baemin.order.repository.OrderProductRepository;
 import com.sparta26.baemin.order.repository.OrderRepository;
 import com.sparta26.baemin.payment.entity.Payment;
 import com.sparta26.baemin.product.entity.Product;
+import com.sparta26.baemin.redis.RedisService;
 import com.sparta26.baemin.store.entity.Store;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.sparta26.baemin.member.entity.UserRole.ROLE_CUSTOMER;
 
@@ -46,6 +49,7 @@ public class OrderService {
     private final PaymentServiceClient paymentServiceClient;
     private final OrderRepository orderRepository;
     private final OrderProductRepository orderProductRepository;
+    private final RedisService redisService;
 
 
     @Transactional
@@ -169,6 +173,14 @@ public class OrderService {
         Order order = getOrderById(orderId);
         order.delete(email);
         return true;
+    }
+
+    public List<ResponseWeeklyOrderCountDto> getWeeklyOrderCounts() {
+
+        Map<String, String> weeklyOrderCounts = redisService.getWeeklyOrderCounts();
+        return weeklyOrderCounts.entrySet().stream()
+                .map(entry -> new ResponseWeeklyOrderCountDto(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     private Order createOrder(RequestOrderCreateDto request, Member member, Store store) {

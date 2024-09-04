@@ -6,7 +6,7 @@ import OrdersTable from "./OrdersTable";
 import OrdersChart from "./OrdersChart";
 
 function AdminDashboard() {
-    const [selectedMenu, setSelectedMenu] = useState('Users');
+    const [selectedMenu, setSelectedMenu] = useState('Management Console');
 
     const getPageTitle = () => {
         switch (selectedMenu) {
@@ -30,12 +30,7 @@ function AdminDashboard() {
             case 'Payments':
                 return <PaymentsTable />;
             default:
-                return (
-                    <div>
-                        <Typography variant="h6">Orders Chart</Typography>;
-                        <OrdersChart />
-                    </div>
-                );
+                return <OrdersChart />;
         }
     };
 

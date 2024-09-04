@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import {ChevronRight, Search} from '@mui/icons-material';
 import OrderDetailsDialog from './OrderDetailsDialog';
-import {fetchOrders, updateOrderStatus} from "../api/order";
+import {fetchOrders} from "../api/order";
 
 const OrdersTable = () => {
     const [orders, setOrders] = useState([]);
